@@ -4,28 +4,32 @@ import * as React from 'react';
 import Head from 'next/head'
 
 import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Typography,
+  Paper,
+  Checkbox,
+  IconButton,
+  Container,
+  Button,
+  Tooltip
+} from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import { Container } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 interface Data {
-  size: number;
   name: string;
+  size: number;
 }
 
 const rows = [
@@ -241,10 +245,9 @@ interface EnhancedTableProps {
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
     props;
-  const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
+  const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+    onRequestSort(event, property);
+  };
 
   return (
     <TableHead>
@@ -380,7 +383,7 @@ export default function Home() {
       <main>
         <Container>
           <Box py={4}>
-            <Paper sx={{ width: '100%', mb: 2 }}>
+            <Paper>
               <EnhancedTableToolbar numSelected={selected.length} />
               <TableContainer>
                 <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="small">
@@ -409,7 +412,7 @@ export default function Home() {
                             <TableCell padding="checkbox">
                               <Checkbox color="primary" checked={isItemSelected} />
                             </TableCell>
-                            <TableCell component="th" id={labelId} scope="row" padding="none">{row.name}
+                            <TableCell id={labelId} padding="none">{row.name}
                             </TableCell>
                             <TableCell align="right">{row.size}</TableCell>
                           </TableRow>)
@@ -418,6 +421,11 @@ export default function Home() {
                 </Table>
               </TableContainer>
             </Paper>
+          </Box>
+          <Box>
+            <Button variant="outlined" startIcon={<FileDownloadIcon />}>
+              Upload file
+            </Button>
           </Box>
         </Container>
       </main>
