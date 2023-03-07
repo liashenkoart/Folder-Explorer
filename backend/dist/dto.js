@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileItemDto = exports.CreateNewFile = exports.CreateFolderDto = exports.FileUploadQueryDto = exports.DestinationStartWith = void 0;
+exports.FileItemDto = exports.CreateNewFile = exports.CreateFolderDto = exports.RenameFileDto = exports.FileUploadQueryDto = exports.DestinationStartWith = void 0;
 const class_validator_1 = require("class-validator");
 const class_validator_2 = require("class-validator");
 let DestinationStartWith = class DestinationStartWith {
@@ -17,7 +17,7 @@ let DestinationStartWith = class DestinationStartWith {
         return path === process.env.FILES_FOLDER || (path.startsWith(`${process.env.FILES_FOLDER}/`) && path.length > `${process.env.FILES_FOLDER}/`.length);
     }
     defaultMessage(args) {
-        return 'Text ($value) is too short or too long!';
+        return 'Wrong directory';
     }
 };
 DestinationStartWith = __decorate([
@@ -28,18 +28,43 @@ class FileUploadQueryDto {
 }
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_2.Validate)(DestinationStartWith),
     __metadata("design:type", String)
 ], FileUploadQueryDto.prototype, "destination", void 0);
 exports.FileUploadQueryDto = FileUploadQueryDto;
+class RenameFileDto {
+    constructor() {
+        this.rewrite = false;
+    }
+}
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_2.Validate)(DestinationStartWith),
+    __metadata("design:type", String)
+], RenameFileDto.prototype, "directory", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], RenameFileDto.prototype, "oldName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], RenameFileDto.prototype, "newName", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], RenameFileDto.prototype, "rewrite", void 0);
+exports.RenameFileDto = RenameFileDto;
 class CreateFolderDto {
 }
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_2.Validate)(DestinationStartWith, {
-        message: 'Title is too short or long!',
-    }),
+    (0, class_validator_2.Validate)(DestinationStartWith),
     __metadata("design:type", String)
 ], CreateFolderDto.prototype, "destination", void 0);
 __decorate([
@@ -53,9 +78,7 @@ class CreateNewFile {
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_2.Validate)(DestinationStartWith, {
-        message: 'Title is too short or long!',
-    }),
+    (0, class_validator_2.Validate)(DestinationStartWith),
     __metadata("design:type", String)
 ], CreateNewFile.prototype, "destination", void 0);
 __decorate([

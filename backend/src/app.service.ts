@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateFolderDto, FileItemDto, CreateNewFile } from './dto';
+import { CreateFolderDto, FileItemDto, CreateNewFile, RenameFileDto } from './dto';
 
 const fs = require("fs")
 const path = require("path")
@@ -47,52 +47,83 @@ export class AppService {
     if(exists) throw new BadRequestException(`File = ${fileName} already exists`)
  }
 
-async fileExists(path: string) {
-  return fs.existsSync(path)
-}
+  async fileExists(path: string) {
+    return fs.existsSync(path)
+  }
 
- async upload(path: string,file:Express.Multer.File): Promise<any> {
-  await this.folderNotFoundError(path);
+  async renameFile({ directory, newName, oldName, rewrite  }: RenameFileDto): Promise<any> {
+    await this.inValidDestinationErorr(directory);
+    const newFilePath = `${directory}/${newName}`;
+    const oldFilePath = `${directory}/${oldName}`;
 
-  return fs.writeFileSync(`${path}/${file.originalname}`, file.buffer)
- } 
-
-
- async createNewFile({ extension, destination, name }: CreateNewFile): Promise<FileItemDto> {
-    const fileName = `${name}.${extension}`;
-    await this.fileAlreadyExistsError(destination, fileName);
-    await this.folderNotFoundError(destination);
-    const fullFilePath = `${destination}/${fileName}`
-    await fs.openSync(fullFilePath, 'w')
-    return this.getTreeByPath(fullFilePath)
-
- }
-
- async createFolder({ destination, name }: CreateFolderDto): Promise<FileItemDto>{
-  const exists = this.fileExists(destination);
-   if(exists) {
-      const isDirectory = await this.isDirectory(destination);
-      if(!isDirectory) {
-        throw new BadRequestException('Destination should be a valid folder')
-      }
-      const path = `${destination}/${name}`;
-      const folderExists = await this.derectoryExists(path);
+    const exists = this.exists(oldFilePath);
+    if(!exists) throw new BadRequestException('File that you want to rename does not exist')
     
-      if(folderExists) {
-        throw new BadRequestException(`Forder = ${name} already exists in ${destination}`)
-       }
-
-       await fs.mkdirSync(path);
-
-       return this.getTreeByPath(path)
-    } else {
-      throw new BadRequestException(`Wrong folder destination = ${path}`)
+    if(!rewrite) {
+       const exists = this.exists(newFilePath);
+       if(exists) throw new BadRequestException('New file name is already taken')
     }
+  
+    await fs.renameSync(oldFilePath, newFilePath);
+
+    return this.getTreeByPath(newFilePath)
   }
 
-  private async fsDeleteFolder(dir: string): Promise<void>  {
-      return await fs.rmSync(dir, { recursive: true, force: true });
+  private exists(path: string): boolean {
+    return fs.existsSync(path)
   }
+
+  async upload(path: string,file:Express.Multer.File): Promise<any> {
+    await this.folderNotFoundError(path);
+
+    return fs.writeFileSync(`${path}/${file.originalname}`, file.buffer)
+  } 
+
+  async createNewFile({ extension, destination, name }: CreateNewFile): Promise<FileItemDto> {
+      const fileName = `${name}.${extension}`;
+      await this.fileAlreadyExistsError(destination, fileName);
+      await this.folderNotFoundError(destination);
+      const fullFilePath = `${destination}/${fileName}`
+      await fs.openSync(fullFilePath, 'w')
+      return this.getTreeByPath(fullFilePath)
+  }
+
+  async createFile({ name, extension, destination }: CreateNewFile) {
+    await this.folderNotFoundError(destination);
+    const newFile = `${name}.${extension}`;
+    await this.fileAlreadyExistsError(destination,newFile);
+
+    const newFileDest = `${destination}/${newFile}`;
+    fs.openSync(newFileDest, 'w');
+    return this.getTreeByPath(newFileDest)
+
+  }
+
+  async createFolder({ destination, name }: CreateFolderDto): Promise<FileItemDto>{
+    const exists = this.fileExists(destination);
+    if(exists) {
+        const isDirectory = await this.isDirectory(destination);
+        if(!isDirectory) {
+          throw new BadRequestException('Destination should be a valid folder')
+        }
+        const path = `${destination}/${name}`;
+        const folderExists = await this.derectoryExists(path);
+      
+        if(folderExists) {
+          throw new BadRequestException(`Forder = ${name} already exists in ${destination}`)
+        }
+
+        await fs.mkdirSync(path);
+
+        return this.getTreeByPath(path)
+      } else {
+        throw new BadRequestException(`Wrong folder destination = ${path}`)
+      }
+    }
+
+    private async fsDeleteFolder(dir: string): Promise<void>  {
+        return await fs.rmSync(dir, { recursive: true, force: true });
+    }
 
   private async fsDeleteFile(file: string): Promise<void>  {
       return  await fs.unlinkSync(file);
@@ -120,6 +151,11 @@ async fileExists(path: string) {
         resolve(false)
       }
     })
+  }
+
+  private inValidDestinationErorr(path: string): void {
+    const exist = fs.existsSync(path);
+    if(!exist) throw new BadRequestException('Invalid file/folder path')
   }
 
   private derectoryExists(path: string): Promise<boolean> {

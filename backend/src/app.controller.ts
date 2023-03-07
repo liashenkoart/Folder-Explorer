@@ -1,7 +1,8 @@
-import { Controller, Get, Query, Delete, UseInterceptors, Post, UploadedFile, Body } from '@nestjs/common';
+import { Controller, Get, Query, Delete, UseInterceptors, Post, UploadedFile, Body, Param, Put} from '@nestjs/common';
 import { AppService } from './app.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileUploadQueryDto, CreateFolderDto, FileItemDto, CreateNewFile } from './dto';
+import { FileUploadQueryDto, CreateFolderDto, FileItemDto, CreateNewFile, RenameFileDto } from './dto';
+import { FileType } from './enum';
 
 @Controller('files')
 export class AppController {
@@ -11,17 +12,6 @@ export class AppController {
   tree(): any {
     return this.appService.directoryTree()
   }
-
-  @Post('folder')
-  @UseInterceptors(FileInterceptor('file'))
-  async addFolder(@Body() body: CreateFolderDto): Promise<FileItemDto> {
-    return this.appService.createFolder(body)
-  }
-
-  @Post('new')
-  async newFile(@Body() body): Promise<FileItemDto> {
-    return this.appService.createNewFile(body)
-  }
   
   @Post()
   @UseInterceptors(FileInterceptor('file'))
@@ -29,13 +19,27 @@ export class AppController {
     return this.appService.upload(query.destination,file)
   }
 
-  @Delete('folder')
-  async deleteFolder(@Query('path') path: string): Promise<FileItemDto>  {
-    return this.appService.deleteFolder(path)
+  @Put('rename')
+  async rename(@Body() body: RenameFileDto): Promise<FileItemDto>  {
+    return this.appService.renameFile(body)
   }
 
-  @Delete('file')
-  async deleteFile(@Query('path') path: string): Promise<FileItemDto>  {
-    return this.appService.deleteFile(path)
+  @Delete(`type(${FileType.FILE}|${FileType.DIRECTORY})`)
+  async deleteFile(@Query('path') path: string, @Param('type') type: FileType): Promise<FileItemDto>  {
+    if(type === FileType.FILE) {
+      return this.appService.deleteFile(path);
+    } else {
+      return this.appService.deleteFolder(path);
+    }
+  }
+
+  @Post(`new/${FileType.FILE}`)
+  async newFile(@Body() body: CreateNewFile): Promise<any> {
+   return this.appService.createFile(body)
+  }
+
+  @Post(`new/${FileType.DIRECTORY}`)
+  async newFolder(@Body() body: CreateFolderDto): Promise<FileItemDto> {
+      return this.appService.createFolder(body)
   }
 }

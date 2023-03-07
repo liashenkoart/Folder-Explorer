@@ -4,19 +4,25 @@ export declare class DestinationStartWith implements ValidatorConstraintInterfac
     defaultMessage(args: ValidationArguments): string;
 }
 export declare class FileUploadQueryDto {
-    destination: string;
+    readonly destination: string;
+}
+export declare class RenameFileDto {
+    readonly directory: string;
+    readonly oldName: string;
+    readonly newName: string;
+    readonly rewrite: boolean;
 }
 export declare class CreateFolderDto {
-    destination: string;
-    name: string;
+    readonly destination: string;
+    readonly name: string;
 }
 export declare class CreateNewFile {
-    destination: string;
-    name: string;
-    extension: string;
+    readonly destination: string;
+    readonly name: string;
+    readonly extension: string;
 }
 export declare class FileItemDto {
-    path: string;
-    name: string;
+    readonly path: string;
+    readonly name: string;
     children: [];
 }

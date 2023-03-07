@@ -45,6 +45,24 @@ let AppService = class AppService {
     async fileExists(path) {
         return fs.existsSync(path);
     }
+    async renameFile({ directory, newName, oldName, rewrite }) {
+        await this.inValidDestinationErorr(directory);
+        const newFilePath = `${directory}/${newName}`;
+        const oldFilePath = `${directory}/${oldName}`;
+        const exists = this.exists(oldFilePath);
+        if (!exists)
+            throw new common_1.BadRequestException('File that you want to rename does not exist');
+        if (!rewrite) {
+            const exists = this.exists(newFilePath);
+            if (exists)
+                throw new common_1.BadRequestException('New file name is already taken');
+        }
+        await fs.renameSync(oldFilePath, newFilePath);
+        return this.getTreeByPath(newFilePath);
+    }
+    exists(path) {
+        return fs.existsSync(path);
+    }
     async upload(path, file) {
         await this.folderNotFoundError(path);
         return fs.writeFileSync(`${path}/${file.originalname}`, file.buffer);
@@ -56,6 +74,14 @@ let AppService = class AppService {
         const fullFilePath = `${destination}/${fileName}`;
         await fs.openSync(fullFilePath, 'w');
         return this.getTreeByPath(fullFilePath);
+    }
+    async createFile({ name, extension, destination }) {
+        await this.folderNotFoundError(destination);
+        const newFile = `${name}.${extension}`;
+        await this.fileAlreadyExistsError(destination, newFile);
+        const newFileDest = `${destination}/${newFile}`;
+        fs.openSync(newFileDest, 'w');
+        return this.getTreeByPath(newFileDest);
     }
     async createFolder({ destination, name }) {
         const exists = this.fileExists(destination);
@@ -105,6 +131,11 @@ let AppService = class AppService {
                 resolve(false);
             }
         });
+    }
+    inValidDestinationErorr(path) {
+        const exist = fs.existsSync(path);
+        if (!exist)
+            throw new common_1.BadRequestException('Invalid file/folder path');
     }
     derectoryExists(path) {
         return new Promise((resolve, reject) => {

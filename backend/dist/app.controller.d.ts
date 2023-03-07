@@ -1,13 +1,14 @@
 /// <reference types="multer" />
 import { AppService } from './app.service';
-import { FileUploadQueryDto, CreateFolderDto, FileItemDto } from './dto';
+import { FileUploadQueryDto, CreateFolderDto, FileItemDto, CreateNewFile, RenameFileDto } from './dto';
+import { FileType } from './enum';
 export declare class AppController {
     private readonly appService;
     constructor(appService: AppService);
     tree(): any;
-    addFolder(body: CreateFolderDto): Promise<FileItemDto>;
-    newFile(body: any): Promise<FileItemDto>;
     uploadFile(query: FileUploadQueryDto, file: Express.Multer.File): Promise<FileItemDto>;
-    deleteFolder(path: string): Promise<FileItemDto>;
-    deleteFile(path: string): Promise<FileItemDto>;
+    rename(body: RenameFileDto): Promise<FileItemDto>;
+    deleteFile(path: string, type: FileType): Promise<FileItemDto>;
+    newFile(body: CreateNewFile): Promise<any>;
+    newFolder(body: CreateFolderDto): Promise<FileItemDto>;
 }

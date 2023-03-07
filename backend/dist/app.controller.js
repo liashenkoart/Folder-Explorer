@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
 const platform_express_1 = require("@nestjs/platform-express");
 const dto_1 = require("./dto");
+const enum_1 = require("./enum");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
@@ -24,20 +25,25 @@ let AppController = class AppController {
     tree() {
         return this.appService.directoryTree();
     }
-    async addFolder(body) {
-        return this.appService.createFolder(body);
-    }
-    async newFile(body) {
-        return this.appService.createNewFile(body);
-    }
     async uploadFile(query, file) {
         return this.appService.upload(query.destination, file);
     }
-    async deleteFolder(path) {
-        return this.appService.deleteFolder(path);
+    async rename(body) {
+        return this.appService.renameFile(body);
     }
-    async deleteFile(path) {
-        return this.appService.deleteFile(path);
+    async deleteFile(path, type) {
+        if (type === enum_1.FileType.FILE) {
+            return this.appService.deleteFile(path);
+        }
+        else {
+            return this.appService.deleteFolder(path);
+        }
+    }
+    async newFile(body) {
+        return this.appService.createFile(body);
+    }
+    async newFolder(body) {
+        return this.appService.createFolder(body);
     }
 };
 __decorate([
@@ -46,21 +52,6 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Object)
 ], AppController.prototype, "tree", null);
-__decorate([
-    (0, common_1.Post)('folder'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [dto_1.CreateFolderDto]),
-    __metadata("design:returntype", Promise)
-], AppController.prototype, "addFolder", null);
-__decorate([
-    (0, common_1.Post)('new'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AppController.prototype, "newFile", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
@@ -71,19 +62,34 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "uploadFile", null);
 __decorate([
-    (0, common_1.Delete)('folder'),
-    __param(0, (0, common_1.Query)('path')),
+    (0, common_1.Put)('rename'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [dto_1.RenameFileDto]),
     __metadata("design:returntype", Promise)
-], AppController.prototype, "deleteFolder", null);
+], AppController.prototype, "rename", null);
 __decorate([
-    (0, common_1.Delete)('file'),
+    (0, common_1.Delete)(`type(${enum_1.FileType.FILE}|${enum_1.FileType.DIRECTORY})`),
     __param(0, (0, common_1.Query)('path')),
+    __param(1, (0, common_1.Param)('type')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "deleteFile", null);
+__decorate([
+    (0, common_1.Post)(`new/${enum_1.FileType.FILE}`),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [dto_1.CreateNewFile]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "newFile", null);
+__decorate([
+    (0, common_1.Post)(`new/${enum_1.FileType.DIRECTORY}`),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [dto_1.CreateFolderDto]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "newFolder", null);
 AppController = __decorate([
     (0, common_1.Controller)('files'),
     __metadata("design:paramtypes", [app_service_1.AppService])
