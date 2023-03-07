@@ -35,7 +35,7 @@ export class AppController {
 
   @Post(`new/${FileType.FILE}`)
   async newFile(@Body() body: CreateNewFile): Promise<any> {
-   return this.appService.createFile(body)
+     return this.appService.createFile(body)
   }
 
   @Post(`new/${FileType.DIRECTORY}`)

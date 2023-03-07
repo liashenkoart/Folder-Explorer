@@ -79,38 +79,38 @@ export class AppService {
     return fs.writeFileSync(`${path}/${file.originalname}`, file.buffer)
   } 
 
-  async createNewFile({ extension, destination, name }: CreateNewFile): Promise<FileItemDto> {
+  async createNewFile({ extension, directory, name }: CreateNewFile): Promise<FileItemDto> {
       const fileName = `${name}.${extension}`;
-      await this.fileAlreadyExistsError(destination, fileName);
-      await this.folderNotFoundError(destination);
-      const fullFilePath = `${destination}/${fileName}`
+      await this.fileAlreadyExistsError(directory, fileName);
+      await this.folderNotFoundError(directory);
+      const fullFilePath = `${directory}/${fileName}`
       await fs.openSync(fullFilePath, 'w')
       return this.getTreeByPath(fullFilePath)
   }
 
-  async createFile({ name, extension, destination }: CreateNewFile) {
-    await this.folderNotFoundError(destination);
+  async createFile({ name, extension, directory }: CreateNewFile) {
+    await this.folderNotFoundError(directory);
     const newFile = `${name}.${extension}`;
-    await this.fileAlreadyExistsError(destination,newFile);
+    await this.fileAlreadyExistsError(directory,newFile);
 
-    const newFileDest = `${destination}/${newFile}`;
+    const newFileDest = `${directory}/${newFile}`;
     fs.openSync(newFileDest, 'w');
     return this.getTreeByPath(newFileDest)
 
   }
 
-  async createFolder({ destination, name }: CreateFolderDto): Promise<FileItemDto>{
-    const exists = this.fileExists(destination);
+  async createFolder({ directory, name }: CreateFolderDto): Promise<FileItemDto>{
+    const exists = this.fileExists(directory);
     if(exists) {
-        const isDirectory = await this.isDirectory(destination);
+        const isDirectory = await this.isDirectory(directory);
         if(!isDirectory) {
           throw new BadRequestException('Destination should be a valid folder')
         }
-        const path = `${destination}/${name}`;
+        const path = `${directory}/${name}`;
         const folderExists = await this.derectoryExists(path);
       
         if(folderExists) {
-          throw new BadRequestException(`Forder = ${name} already exists in ${destination}`)
+          throw new BadRequestException(`Forder = ${name} already exists in ${directory}`)
         }
 
         await fs.mkdirSync(path);

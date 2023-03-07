@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString, IsBoolean, IsOptional} from 'class-validator';
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, Validate } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @ValidatorConstraint({ name: 'customPath', async: false })
 export class DestinationStartWith implements ValidatorConstraintInterface {
@@ -37,11 +38,13 @@ export class RenameFileDto {
 }
 
 export class CreateFolderDto {
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     @Validate(DestinationStartWith)
-    readonly destination: string;
+    readonly directory: string;
 
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     readonly name: string;
@@ -49,15 +52,18 @@ export class CreateFolderDto {
 
 
 export class CreateNewFile {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @Validate(DestinationStartWith)
-  readonly destination: string;
+  readonly directory: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   readonly name: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   readonly extension: string;
