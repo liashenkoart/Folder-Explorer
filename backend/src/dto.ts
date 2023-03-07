@@ -158,20 +158,3 @@ export class FolderItemDto {
   })
   readonly children: FileItemDto;
 }
-
-
-
-  // {
-  //   "path": "test_folder/new_file.txt",
-  //   "name": "new_file.txt",
-  //   "mtime": "2022-12-01T08:41:14.099Z",
-  //   "size": 0,
-  //   "type": "file"
-  // }
-
-  // "path": "test_folder/new_image_folder",
-  // "name": "new_image_folder",
-  // "children": [],
-  // "mtime": "2022-12-01T08:42:07.414Z",
-  // "size": 0,
-  // "type": "directory"
