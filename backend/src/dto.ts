@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsBoolean, IsOptional, IsNumber, IsDateString, IsArray, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString, IsBoolean, IsOptional, IsNumber, IsDateString } from 'class-validator';
 import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, Validate } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 

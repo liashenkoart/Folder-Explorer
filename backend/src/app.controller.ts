@@ -1,10 +1,8 @@
-import { Controller, Get, Query, Delete, UseInterceptors, Post, UploadedFile, Body, Param, Put} from '@nestjs/common';
+import { Controller, Get, Query, Delete, Post, Body, Param, Put} from '@nestjs/common';
 import { AppService } from './app.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { FileUploadQueryDto, CreateFolderDto, FileItemDto, CreateNewFile, RenameFileDto, FolderItemDto } from './dto';
+import { CreateFolderDto, FileItemDto, CreateNewFile, RenameFileDto, FolderItemDto } from './dto';
 import { FileType } from './enum';
 import { ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiOkResponse, ApiNotFoundResponse, ApiTags, ApiParam } from '@nestjs/swagger';
-import { type } from 'os';
 
 @ApiTags('files')
 @Controller('files')
