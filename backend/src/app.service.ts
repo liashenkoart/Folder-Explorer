@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateFolderDto, FileItemDto, CreateNewFile, RenameFileDto } from './dto';
+import { CreateFolderDto, FileItemDto, CreateNewFile, RenameFileDto, FolderItemDto } from './dto';
 
 const fs = require("fs")
 const path = require("path")
@@ -170,11 +170,11 @@ export class AppService {
     })
   }
 
-  private getTreeByPath(path: string) {
+  private getTreeByPath(path: string): FolderItemDto {
     return dirTree(path, this.dirTreeConfig)
   }
 
-  public directoryTree(){
+  public directoryTree(): FolderItemDto{
     return this.getTreeByPath(process.env.FILES_FOLDER)
   }
 }

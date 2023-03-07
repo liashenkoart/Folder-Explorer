@@ -8,11 +8,12 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
+  app.setGlobalPrefix('api')
   const config = new DocumentBuilder()
-  .setTitle('Cats example')
-  .setDescription('The cats API description')
+  .setTitle('Folder Explorer')
+  .setDescription('The Folder Explorer API description')
   .setVersion('1.0')
-  .addTag('cats')
+  .addTag('explorer')
   .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -1,30 +1,45 @@
 import { Controller, Get, Query, Delete, UseInterceptors, Post, UploadedFile, Body, Param, Put} from '@nestjs/common';
 import { AppService } from './app.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileUploadQueryDto, CreateFolderDto, FileItemDto, CreateNewFile, RenameFileDto } from './dto';
+import { FileUploadQueryDto, CreateFolderDto, FileItemDto, CreateNewFile, RenameFileDto, FolderItemDto } from './dto';
 import { FileType } from './enum';
+import { ApiCreatedResponse, ApiUnprocessableEntityResponse, ApiOkResponse, ApiNotFoundResponse, ApiTags, ApiParam } from '@nestjs/swagger';
+import { type } from 'os';
 
+@ApiTags('files')
 @Controller('files')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  tree(): any {
+  @ApiOkResponse({ description: 'The resource was returned successfully', type: FolderItemDto })
+  tree(): FolderItemDto {
     return this.appService.directoryTree()
   }
   
-  @Post()
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@Query() query: FileUploadQueryDto, @UploadedFile() file: Express.Multer.File): Promise<FileItemDto>  {
-    return this.appService.upload(query.destination,file)
-  }
+  // @Post()
+  // @UseInterceptors(FileInterceptor('file'))
+  // async uploadFile(@Query() query: FileUploadQueryDto, @UploadedFile() file: Express.Multer.File): Promise<FileItemDto>  {
+  //   return this.appService.upload(query.destination,file)
+  // }
 
   @Put('rename')
-  async rename(@Body() body: RenameFileDto): Promise<FileItemDto>  {
+  @ApiOkResponse({ description: 'The resource was returned successfully' })
+  @ApiNotFoundResponse({ description: 'Resource not found' })
+  async rename(@Body() body: RenameFileDto): Promise<FileItemDto | FolderItemDto>  {
     return this.appService.renameFile(body)
   }
 
-  @Delete(`type(${FileType.FILE}|${FileType.DIRECTORY})`)
+
+  @Delete(`:type(${FileType.FILE}|${FileType.DIRECTORY})`)
+  @ApiParam({
+    name: 'type',
+    required: true,
+    schema: { oneOf: [{type: FileType.FILE}, {type: FileType.DIRECTORY}]},
+    enum: FileType
+  })
+  @ApiOkResponse({ description: 'The resource was returned successfully' })
+  @ApiNotFoundResponse({ description: 'Resource not found' })
   async deleteFile(@Query('path') path: string, @Param('type') type: FileType): Promise<FileItemDto>  {
     if(type === FileType.FILE) {
       return this.appService.deleteFile(path);
@@ -33,12 +48,16 @@ export class AppController {
     }
   }
 
-  @Post(`new/${FileType.FILE}`)
+  @Post(`${FileType.FILE}`)
+  @ApiCreatedResponse({ description: 'Created Succesfully', type: FileItemDto })
+  @ApiUnprocessableEntityResponse({ description: 'Bad Request' })
   async newFile(@Body() body: CreateNewFile): Promise<any> {
      return this.appService.createFile(body)
   }
 
-  @Post(`new/${FileType.DIRECTORY}`)
+  @Post(`${FileType.DIRECTORY}`)
+  @ApiCreatedResponse({ description: 'Created Succesfully', type: FolderItemDto })
+  @ApiUnprocessableEntityResponse({ description: 'Bad Request' })
   async newFolder(@Body() body: CreateFolderDto): Promise<FileItemDto> {
       return this.appService.createFolder(body)
   }
