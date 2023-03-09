@@ -4,6 +4,7 @@ import * as React from "react";
 import { IconButton, Toolbar, Tooltip, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
 
@@ -31,11 +32,19 @@ export const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         : <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
           File & Directory Browsing
         </Typography>}
-      {numSelected > 0 ? <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+      {numSelected > 0
+        ? <>
+          {numSelected === 1 && <Tooltip title="Delete">
+            <IconButton>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>}
+          <Tooltip title="Delete">
+            <IconButton>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
         : <Tooltip title="Filter list">
           <IconButton>
             <FilterListIcon />

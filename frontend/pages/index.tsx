@@ -2,6 +2,7 @@ import * as React from 'react';
 
 // libs
 import Head from 'next/head'
+import Link from "next/link";
 
 import {
   Box,
@@ -129,7 +130,7 @@ export default function Home() {
                             {row.type === "directory"
                               ? <FileCopyIcon fontSize="small" />
                               : <FolderIcon fontSize="small" />}
-                            {row.name}
+                            <Link href={row.path} legacyBehavior><a>{row.name}</a></Link>
                           </Box>
                         </TableCell>
                         <TableCell align="right">{formatBytes(row.size)}</TableCell>
