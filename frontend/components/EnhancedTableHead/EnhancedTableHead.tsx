@@ -28,13 +28,25 @@ const headCells: readonly HeadCell[] = [
     id: 'name',
     numeric: false,
     disablePadding: true,
-    label: 'File',
+    label: 'Filename',
   },
   {
     id: 'size',
     numeric: true,
     disablePadding: false,
     label: 'Size',
+  },
+  {
+    id: 'counts',
+    numeric: true,
+    disablePadding: false,
+    label: 'Counts',
+  },
+  {
+    id: 'last_modified',
+    numeric: true,
+    disablePadding: false,
+    label: 'Last Modified',
   },
 ];
 

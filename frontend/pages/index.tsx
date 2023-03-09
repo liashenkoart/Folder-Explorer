@@ -16,154 +16,34 @@ import {
   Button,
 } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import FolderIcon from '@mui/icons-material/Folder';
 import { Data, Order } from "../types/table";
 import { EnhancedTableHead } from "../components/EnhancedTableHead/EnhancedTableHead";
 import { EnhancedTableToolbar } from "../components/EnhancedTableToolbar/EnhancedTableToolbar";
 import { getComparator } from "../utils/descendingComparator";
 import { stableSort } from "../utils/stableSort";
-
+import { formatBytes } from "../utils/formatBytes";
+import { formatDate } from "../utils/formatDate";
 
 const rows = [
   {
     "path": "files1",
     "name": "files1",
-    "children": [
-      {
-        "path": "files/.DS_Store",
-        "name": ".DS_Store",
-        "mtime": "2022-11-30T17:16:29.447Z",
-        "size": 6148
-      },
-      {
-        "path": "files/check.json",
-        "name": "check.json",
-        "mtime": "2022-11-30T16:40:03.497Z",
-        "size": 0
-      },
-      {
-        "path": "files/folder",
-        "name": "folder",
-        "children": [
-          {
-            "path": "files/folder/Screenshot 2022-11-28 at 20.44.42.png",
-            "name": "Screenshot 2022-11-28 at 20.44.42.png",
-            "mtime": "2022-11-30T17:16:29.215Z",
-            "size": 274850
-          },
-          {
-            "path": "files/folder/check2.json",
-            "name": "check2.json",
-            "mtime": "2022-11-30T17:01:05.388Z",
-            "size": 0
-          },
-          {
-            "path": "files/folder/folder.json",
-            "name": "folder.json",
-            "mtime": "2022-11-30T17:16:23.945Z",
-            "size": 0
-          }
-        ],
-        "mtime": "2022-11-30T17:16:29.214Z",
-        "size": 274850
-      }
-    ],
-    "mtime": "2022-11-30T17:13:14.624Z",
-    "size": 280998
+    "size": 280998,
+    "type": "directory",
+    "counts": 4,
+    "last_modified": "2022-11-30T17:13:14.624Z"
   },
   {
     "path": "files2",
     "name": "files2",
-    "children": [
-      {
-        "path": "files/.DS_Store",
-        "name": ".DS_Store",
-        "mtime": "2022-11-30T17:16:29.447Z",
-        "size": 6148
-      },
-      {
-        "path": "files/check.json",
-        "name": "check.json",
-        "mtime": "2022-11-30T16:40:03.497Z",
-        "size": 0
-      },
-      {
-        "path": "files/folder",
-        "name": "folder",
-        "children": [
-          {
-            "path": "files/folder/Screenshot 2022-11-28 at 20.44.42.png",
-            "name": "Screenshot 2022-11-28 at 20.44.42.png",
-            "mtime": "2022-11-30T17:16:29.215Z",
-            "size": 274850
-          },
-          {
-            "path": "files/folder/check2.json",
-            "name": "check2.json",
-            "mtime": "2022-11-30T17:01:05.388Z",
-            "size": 0
-          },
-          {
-            "path": "files/folder/folder.json",
-            "name": "folder.json",
-            "mtime": "2022-11-30T17:16:23.945Z",
-            "size": 0
-          }
-        ],
-        "mtime": "2022-11-30T17:16:29.214Z",
-        "size": 274850
-      }
-    ],
-    "mtime": "2022-11-30T17:13:14.624Z",
-    "size": 280998
+    "size": 2803998,
+    "type": "file",
+    "counts": 1,
+    "last_modified": "2022-11-30T17:13:14.624Z"
   },
-  {
-    "path": "files3",
-    "name": "files3",
-    "children": [
-      {
-        "path": "files/.DS_Store",
-        "name": ".DS_Store",
-        "mtime": "2022-11-30T17:16:29.447Z",
-        "size": 6148
-      },
-      {
-        "path": "files/check.json",
-        "name": "check.json",
-        "mtime": "2022-11-30T16:40:03.497Z",
-        "size": 0
-      },
-      {
-        "path": "files/folder",
-        "name": "folder",
-        "children": [
-          {
-            "path": "files/folder/Screenshot 2022-11-28 at 20.44.42.png",
-            "name": "Screenshot 2022-11-28 at 20.44.42.png",
-            "mtime": "2022-11-30T17:16:29.215Z",
-            "size": 274850
-          },
-          {
-            "path": "files/folder/check2.json",
-            "name": "check2.json",
-            "mtime": "2022-11-30T17:01:05.388Z",
-            "size": 0
-          },
-          {
-            "path": "files/folder/folder.json",
-            "name": "folder.json",
-            "mtime": "2022-11-30T17:16:23.945Z",
-            "size": 0
-          }
-        ],
-        "mtime": "2022-11-30T17:16:29.214Z",
-        "size": 274850
-      }
-    ],
-    "mtime": "2022-11-30T17:13:14.624Z",
-    "size": 280998
-  }
 ];
-
 
 export default function Home() {
   const [order, setOrder] = React.useState<Order>('asc');
@@ -244,10 +124,17 @@ export default function Home() {
                         <TableCell padding="checkbox">
                           <Checkbox color="primary" checked={isItemSelected} />
                         </TableCell>
-                        <TableCell id={labelId} padding="none">{row.name}
+                        <TableCell id={labelId} padding="none">
+                          <Box display="flex" alignItems="center" gap={1}>
+                            {row.type === "directory"
+                              ? <FileCopyIcon fontSize="small" />
+                              : <FolderIcon fontSize="small" />}
+                            {row.name}
+                          </Box>
                         </TableCell>
-                        <TableCell align="right">{row.size}</TableCell>
-                        <TableCell align="right">{row.children.length}</TableCell>
+                        <TableCell align="right">{formatBytes(row.size)}</TableCell>
+                        <TableCell align="right">{row.counts}</TableCell>
+                        <TableCell align="right">{formatDate(row.last_modified)}</TableCell>
                       </TableRow>)
                     })}
                   </TableBody>
