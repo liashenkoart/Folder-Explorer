@@ -1,11 +1,10 @@
 import * as React from "react";
 
 // libs
-import { IconButton, Toolbar, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import FilterListIcon from "@mui/icons-material/FilterList";
 
 
 interface EnhancedTableToolbarProps {
@@ -29,11 +28,14 @@ export const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
           {numSelected} selected
         </Typography>
-        : <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-          File & Directory Browsing
-        </Typography>}
+        : <>
+          <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
+            File & Directory Browsing
+          </Typography>
+          <TextField size="small" fullWidth label="Search field" type="search" />
+        </>}
       {numSelected > 0
-        ? <>
+        ? <Box display="flex" alignItems="center">
           {numSelected === 1 && <Tooltip title="Delete">
             <IconButton>
               <EditIcon />
@@ -44,12 +46,8 @@ export const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-        </>
-        : <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>}
+        </Box>
+        : null}
     </Toolbar>
   );
 }
