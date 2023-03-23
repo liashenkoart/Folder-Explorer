@@ -14,6 +14,12 @@ export class AppController {
   tree(): FolderItemDto {
     return this.appService.directoryTree()
   }
+
+  @Get(':node')
+  @ApiOkResponse({ description: 'The resource was returned successfully', type: FolderItemDto })
+  node(@Param('node') node: string): FolderItemDto {
+    return this.appService.getNode(node)
+  }
   
   // @Post()
   // @UseInterceptors(FileInterceptor('file'))
