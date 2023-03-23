@@ -15,10 +15,10 @@ export class AppController {
     return this.appService.directoryTree()
   }
 
-  @Get(':node')
+  @Get('node')
   @ApiOkResponse({ description: 'The resource was returned successfully', type: FolderItemDto })
-  node(@Param('node') node: string): FolderItemDto {
-    return this.appService.getNode(node)
+  node(@Query('path') path: string): FolderItemDto {
+    return this.appService.getNode(path)
   }
   
   // @Post()
