@@ -177,4 +177,8 @@ export class AppService {
   public directoryTree(): FolderItemDto{
     return this.getTreeByPath(process.env.FILES_FOLDER)
   }
+
+  public getNode(path: string): FolderItemDto{
+    return this.getTreeByPath(path)
+  }
 }
