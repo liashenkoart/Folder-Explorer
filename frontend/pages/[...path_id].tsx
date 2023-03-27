@@ -16,14 +16,12 @@ import {
   Container,
   Button,
   Typography,
-  TextField,
 } from '@mui/material';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import FolderIcon from '@mui/icons-material/Folder';
 import { Data, Order } from "../types/table";
-import { EnhancedTableHead } from "../components/EnhancedTableHead/EnhancedTableHead";
-import { EnhancedTableToolbar } from "../components/EnhancedTableToolbar/EnhancedTableToolbar";
+import { EnhancedTableHead, EnhancedTableToolbar, BackAndSearch } from "../components";
 import { getComparator } from "../utils/descendingComparator";
 import { stableSort } from "../utils/stableSort";
 import { formatBytes } from "../utils/formatBytes";
@@ -31,9 +29,6 @@ import { formatDate } from "../utils/formatDate";
 import { useEffect } from "react";
 import { FilesAPI } from "../api/files";
 import { useRouter } from "next/router";
-
-//  assets
-import styles from "../styles/files.module.scss"
 
 const initialRor = {
   "path": "",
@@ -153,33 +148,7 @@ export default function Files() {
           <Box py={4}>
             <Paper>
               <EnhancedTableToolbar numSelected={selected.length} />
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: "center",
-                  pl: 2,
-                  pr: 2,
-                  py: 1
-                }}>
-                <Link href={router.asPath.split("/").slice(0, router.asPath.split("/").length - 1).join('/')}
-                      legacyBehavior>
-                  <a className={router.asPath.split("/").length <= 2 ? styles.disabled : ''}>
-                    <Box display="flex" alignItems="center" width={"24px"}>
-                      <Box width="12px" minWidth="12px" mr={1}>
-                        <img src={'./arrow.svg'} alt='' />
-                      </Box>
-                      <Typography>
-                        Back
-                      </Typography>
-                    </Box>
-                  </a>
-                </Link>
-                <Box flex="auto" maxWidth="500px" ml={2}>
-                  <TextField size="small" fullWidth label="Search..." type="search" />
-                </Box>
-              </Box>
+              <BackAndSearch />
               <TableContainer>
                 {rows.length > 0
                   ? <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="small">
