@@ -7,6 +7,10 @@ a {
   }
 }
 
+img, video, svg {
+  width: 100%;
+}
+
 * {
   box-sizing: border-box;
   padding:    0;

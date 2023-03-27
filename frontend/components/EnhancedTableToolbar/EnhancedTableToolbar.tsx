@@ -1,7 +1,7 @@
 import * as React from "react";
 
 // libs
-import { Box, IconButton, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, Toolbar, Tooltip, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -28,12 +28,9 @@ export const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         <Typography sx={{ flex: '1 1 100%' }} color="inherit" variant="subtitle1" component="div">
           {numSelected} selected
         </Typography>
-        : <>
-          <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
-            File & Directory Browsing
-          </Typography>
-          <TextField size="small" fullWidth label="Search field" type="search" />
-        </>}
+        : <Typography sx={{ flex: '1 1 100%' }} variant="h6" id="tableTitle" component="div">
+          File & Directory Browsing
+        </Typography>}
       {numSelected > 0
         ? <Box display="flex" alignItems="center">
           {numSelected === 1 && <Tooltip title="Delete">
