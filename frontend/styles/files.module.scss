@@ -1,5 +1,7 @@
-.disabled {
-  pointer-events: none;
-  user-select:    none;
-  filter:         grayscale(.75);
+.back {
+  &.disabled {
+    pointer-events: none;
+    user-select:    none;
+    filter:         grayscale(.75);
+  }
 }

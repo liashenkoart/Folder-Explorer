@@ -202,9 +202,7 @@ export default function Files() {
                     </TableBody>
                   </Table>
                   : <Box p={2}>
-                    <Typography variant="h6" textAlign="center">
-                      <h4>Empty Folder</h4>
-                    </Typography>
+                    <Typography variant="h6" textAlign="center">Empty Folder</Typography>
                   </Box>}
               </TableContainer>
             </Paper>

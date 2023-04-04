@@ -6,6 +6,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import Link from "next/link";
 import { useRouter } from "next/router";
+import cn from "classnames";
 
 //  styles
 import styles from "../../styles/files.module.scss";
@@ -26,8 +27,8 @@ export const BackAndSearch = () => {
       }}>
       <Link href={router.asPath.split("/").slice(0, router.asPath.split("/").length - 1).join('/')}
             legacyBehavior>
-        <a className={router.asPath.split("/").length <= 2 ? styles.disabled : ''}>
-          <Box display="flex" alignItems="center" width={"24px"}>
+        <a className={cn(styles.back, { [styles.disabled]: router.asPath.split("/").length <= 2 })}>
+          <Box display="flex" alignItems="center">
             <ArrowBackIcon fontSize="small" />
             <Typography>
               Back
