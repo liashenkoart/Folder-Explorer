@@ -26,7 +26,6 @@ interface ICreateFile {
 
 const validationSchema = yup.object({
   name: yup.string().required('Name is required'),
-  extension: yup.string().required('Extension is required'),
 });
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
@@ -34,17 +33,16 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
   });
 
-export const CreateFile: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, open }) => {
+export const CreateDirectory: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, open }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const formik = useFormik({
-    initialValues: { name: '', extension: '' },
+    initialValues: { name: '' },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      FilesAPI.createNewFile({
+      FilesAPI.createNewDirectory({
         "directory": path_id.join('/'),
         "name": values.name,
-        "extension": values.extension,
       }).then(() => {
         setOpen(false);
         getFilesByPath(path_id);
@@ -66,7 +64,7 @@ export const CreateFile: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, 
       </Snackbar>}
       <Dialog fullWidth maxWidth="sm" open={open} onClose={() => setOpen(false)}>
         <Box mb={2}>
-          <DialogTitle>Create New File</DialogTitle>
+          <DialogTitle>Create New Directory</DialogTitle>
         </Box>
         <DialogContent>
           <form onSubmit={formik.handleSubmit}>
@@ -79,18 +77,6 @@ export const CreateFile: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, 
                 onChange={formik.handleChange}
                 error={formik.touched.name && Boolean(formik.errors.name)}
                 helperText={formik.touched.name && formik.errors.name}
-              />
-            </Box>
-            <Box mb={4}>
-              <TextField
-                fullWidth
-                name="extension"
-                label="Extension"
-                type="text"
-                value={formik.values.extension}
-                onChange={formik.handleChange}
-                error={formik.touched.extension && Boolean(formik.errors.extension)}
-                helperText={formik.touched.extension && formik.errors.extension}
               />
             </Box>
             <DialogActions>

@@ -21,7 +21,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import FolderIcon from '@mui/icons-material/Folder';
 import { Data, Order } from "../types/table";
-import { EnhancedTableHead, EnhancedTableToolbar, BackAndSearch, CreateFile } from "../components";
+import { EnhancedTableHead, EnhancedTableToolbar, BackAndSearch, CreateFile, CreateDirectory } from "../components";
 import { getComparator } from "../utils/descendingComparator";
 import { stableSort } from "../utils/stableSort";
 import { formatBytes } from "../utils/formatBytes";
@@ -56,7 +56,8 @@ export default function Files() {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [open, setOpen] = React.useState(true);
+  const [openFile, setOpenFile] = React.useState(false);
+  const [openDirectory, setOpenDirectory] = React.useState(false);
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data,) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -148,7 +149,16 @@ export default function Files() {
         <meta name="description" content="File & Directory Browsing" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <CreateFile getFilesByPath={getFilesByPath} path_id={path_id} open={open} setOpen={setOpen} />
+      <CreateFile
+        getFilesByPath={getFilesByPath}
+        path_id={path_id}
+        open={openFile}
+        setOpen={setOpenFile} />
+      <CreateDirectory
+        getFilesByPath={getFilesByPath}
+        path_id={path_id}
+        open={openDirectory}
+        setOpen={setOpenDirectory} />
       <main>
         <Container>
           <Box py={4}>
@@ -214,10 +224,16 @@ export default function Files() {
             </Paper>
           </Box>
           <Box display="flex" alignItems="center" gap={2}>
-            <Button variant="outlined" startIcon={<FileDownloadIcon />} onClick={() => setOpen(true)}>
+            <Button
+              variant="outlined"
+              startIcon={<FileDownloadIcon />}
+              onClick={() => setOpenFile(true)}>
               Create file
             </Button>
-            <Button variant="outlined" startIcon={<FileDownloadIcon />}>
+            <Button
+              variant="outlined"
+              startIcon={<FileDownloadIcon />}
+              onClick={() => setOpenDirectory(true)}>
               Create directory
             </Button>
           </Box>
