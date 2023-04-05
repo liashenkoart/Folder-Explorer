@@ -21,7 +21,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import FolderIcon from '@mui/icons-material/Folder';
 import { Data, Order } from "../types/table";
-import { EnhancedTableHead, EnhancedTableToolbar, BackAndSearch } from "../components";
+import { EnhancedTableHead, EnhancedTableToolbar, BackAndSearch, CreateFile } from "../components";
 import { getComparator } from "../utils/descendingComparator";
 import { stableSort } from "../utils/stableSort";
 import { formatBytes } from "../utils/formatBytes";
@@ -50,12 +50,13 @@ interface IRow {
 
 export default function Files() {
   const router = useRouter();
-  const { path_id } = router.query;
+  const { path_id }: any = router.query;
 
   const [rows, setRows] = React.useState([initialRor]);
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
+  const [open, setOpen] = React.useState(true);
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data,) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -94,25 +95,29 @@ export default function Files() {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
+  const getFilesByPath = (path: string[]) => {
+    FilesAPI.getByPath(path.join('/')).then(({ data }) => {
+      const newData: any = []
+      if (data.children) {
+        data.children.map((row: IRow) => {
+          newData.push({
+            "path": row.path,
+            "name": row.name,
+            "size": row.size,
+            "type": row.type,
+            "counts": row.children ? row.children.length : 0,
+            "last_modified": row.mtime
+          })
+        })
+      }
+      setRows(newData)
+    })
+  }
+
   useEffect(() => {
     if (path_id) {
       if (typeof path_id !== "string") {
-        FilesAPI.getByPath(path_id.join('/')).then(({ data }) => {
-          const newData: any = []
-          if (data.children) {
-            data.children.map((row: IRow) => {
-              newData.push({
-                "path": row.path,
-                "name": row.name,
-                "size": row.size,
-                "type": row.type,
-                "counts": row.children ? row.children.length : 0,
-                "last_modified": row.mtime
-              })
-            })
-          }
-          setRows(newData)
-        })
+        getFilesByPath(path_id);
       }
     }
 
@@ -143,6 +148,7 @@ export default function Files() {
         <meta name="description" content="File & Directory Browsing" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <CreateFile getFilesByPath={getFilesByPath} path_id={path_id} open={open} setOpen={setOpen} />
       <main>
         <Container>
           <Box py={4}>
@@ -207,9 +213,12 @@ export default function Files() {
               </TableContainer>
             </Paper>
           </Box>
-          <Box>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Button variant="outlined" startIcon={<FileDownloadIcon />} onClick={() => setOpen(true)}>
+              Create file
+            </Button>
             <Button variant="outlined" startIcon={<FileDownloadIcon />}>
-              Upload file
+              Create directory
             </Button>
           </Box>
         </Container>
