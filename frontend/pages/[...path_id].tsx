@@ -64,7 +64,6 @@ export default function Files() {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.name);
@@ -122,24 +121,6 @@ export default function Files() {
       }
     }
 
-    // FilesAPI.createNewFile({
-    //   "directory": "test_folder/d1",
-    //   "name": "string22",
-    //   "extension": "txt"
-    // }).then(({ data }) => {
-    //   // setRows(data)
-    // })
-    // FilesAPI.createNewDirectory({
-    //   "directory": "test_folder/d1/test22",
-    //   "name": "check",
-    // }).then(({ data }) => {
-    //   // setRows(data)
-    // })
-    // FilesAPI.getByPath("test_folder/d1").then(({ data }) => {
-    // console.log(data, 'data2')
-    // setRows(data)
-    // })
-
   }, [path_id]);
 
   return (
@@ -163,7 +144,13 @@ export default function Files() {
         <Container>
           <Box py={4}>
             <Paper>
-              <EnhancedTableToolbar numSelected={selected.length} />
+              <EnhancedTableToolbar
+                selected={selected}
+                setSelected={setSelected}
+                numSelected={selected.length}
+                path_id={path_id}
+                getFilesByPath={getFilesByPath}
+                rows={rows} />
               <BackAndSearch />
               <TableContainer>
                 {rows.length > 0

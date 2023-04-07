@@ -8,14 +8,13 @@ import {
   Button,
   Box,
   TextField,
-  Snackbar,
 } from "@mui/material";
 import { useFormik } from 'formik';
 import * as yup from "yup";
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 // components
 import { FilesAPI } from "../../api/files";
+import { Notification } from "../../components";
 
 interface ICreateFile {
   setOpen: (value: boolean) => void,
@@ -27,11 +26,6 @@ interface ICreateFile {
 const validationSchema = yup.object({
   name: yup.string().required('Name is required'),
 });
-
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
-  function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
 
 export const CreateDirectory: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, open }) => {
   const [errorMessage, setErrorMessage] = useState('');
@@ -57,11 +51,7 @@ export const CreateDirectory: FC<ICreateFile> = ({ getFilesByPath, path_id, setO
 
   return (
     <>
-      {errorMessage && <Snackbar open={true} autoHideDuration={6000}>
-        <Alert severity="error" sx={{ width: '100%' }}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>}
+      {errorMessage && <Notification errorMessage={errorMessage} />}
       <Dialog fullWidth maxWidth="sm" open={open} onClose={() => setOpen(false)}>
         <Box mb={2}>
           <DialogTitle>Create New Directory</DialogTitle>
