@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 
 // libs
 import Head from 'next/head'
@@ -20,15 +20,18 @@ import {
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import FolderIcon from '@mui/icons-material/Folder';
-import { Data, Order } from "../types/table";
-import { EnhancedTableHead, EnhancedTableToolbar, BackAndSearch, CreateFile, CreateDirectory } from "../components";
+import { useRouter } from "next/router";
+
+//  components
+import { FilesAPI } from "../api/files";
+import { Rename } from "../components/Rename/Rename";
 import { getComparator } from "../utils/descendingComparator";
 import { stableSort } from "../utils/stableSort";
 import { formatBytes } from "../utils/formatBytes";
 import { formatDate } from "../utils/formatDate";
-import { useEffect } from "react";
-import { FilesAPI } from "../api/files";
-import { useRouter } from "next/router";
+import { Data, Order } from "../types/table";
+import { EnhancedTableHead, EnhancedTableToolbar, BackAndSearch, CreateFile, CreateDirectory } from "../components";
+
 
 const initialRor = {
   "path": "",
@@ -58,6 +61,7 @@ export default function Files() {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [openFile, setOpenFile] = React.useState(false);
   const [openDirectory, setOpenDirectory] = React.useState(false);
+  const [openRename, setOpenRename] = React.useState(false);
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data,) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -140,6 +144,13 @@ export default function Files() {
         path_id={path_id}
         open={openDirectory}
         setOpen={setOpenDirectory} />
+      <Rename
+        getFilesByPath={getFilesByPath}
+        path_id={path_id}
+        open={openRename}
+        setOpen={setOpenRename}
+        selected={selected}
+        setSelected={setSelected} />
       <main>
         <Container>
           <Box py={4}>
@@ -150,7 +161,8 @@ export default function Files() {
                 numSelected={selected.length}
                 path_id={path_id}
                 getFilesByPath={getFilesByPath}
-                rows={rows} />
+                rows={rows}
+                setOpenRename={setOpenRename} />
               <BackAndSearch />
               <TableContainer>
                 {rows.length > 0

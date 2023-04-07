@@ -8,14 +8,13 @@ import {
   Button,
   Box,
   TextField,
-  Snackbar,
 } from "@mui/material";
 import { useFormik } from 'formik';
 import * as yup from "yup";
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 // components
 import { FilesAPI } from "../../api/files";
+import { Notification } from "../Notification/Notification";
 
 interface ICreateFile {
   setOpen: (value: boolean) => void,
@@ -29,23 +28,19 @@ const validationSchema = yup.object({
   extension: yup.string().required('Extension is required'),
 });
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
-  function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
-
 export const CreateFile: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, open }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const formik = useFormik({
     initialValues: { name: '', extension: '' },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       FilesAPI.createNewFile({
         "directory": path_id.join('/'),
         "name": values.name,
         "extension": values.extension,
       }).then(() => {
+        resetForm();
         setOpen(false);
         getFilesByPath(path_id);
       }).catch(({ response }) => {
@@ -59,11 +54,7 @@ export const CreateFile: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, 
 
   return (
     <>
-      {errorMessage && <Snackbar open={true} autoHideDuration={6000}>
-        <Alert severity="error" sx={{ width: '100%' }}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>}
+      {errorMessage && <Notification errorMessage={errorMessage} />}
       <Dialog fullWidth maxWidth="sm" open={open} onClose={() => setOpen(false)}>
         <Box mb={2}>
           <DialogTitle>Create New File</DialogTitle>

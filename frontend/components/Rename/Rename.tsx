@@ -14,31 +14,36 @@ import * as yup from "yup";
 
 // components
 import { FilesAPI } from "../../api/files";
-import { Notification } from "../../components";
+import { Notification } from "../Notification/Notification";
 
 interface ICreateFile {
   setOpen: (value: boolean) => void,
   getFilesByPath: (value: string[]) => void,
   open: boolean;
   path_id: string[];
+  selected: readonly string[];
+  setSelected: (value: readonly string[]) => void;
 }
 
 const validationSchema = yup.object({
-  name: yup.string().required('Name is required'),
+  newName: yup.string().required('Name is required'),
 });
 
-export const CreateDirectory: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, open }) => {
+export const Rename: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, open, selected, setSelected }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const formik = useFormik({
-    initialValues: { name: '' },
+    initialValues: { newName: '', newExtension: '' },
     validationSchema: validationSchema,
     onSubmit: (values, { resetForm }) => {
-      FilesAPI.createNewDirectory({
+      FilesAPI.rename({
         "directory": path_id.join('/'),
-        "name": values.name,
+        "oldName": selected[0],
+        "newName": `${values.newName}${values.newExtension ? `.${values.newExtension}` : ''}`,
+        "rewrite": true
       }).then(() => {
         resetForm();
+        setSelected([]);
         setOpen(false);
         getFilesByPath(path_id);
       }).catch(({ response }) => {
@@ -55,21 +60,32 @@ export const CreateDirectory: FC<ICreateFile> = ({ getFilesByPath, path_id, setO
       {errorMessage && <Notification errorMessage={errorMessage} />}
       <Dialog fullWidth maxWidth="sm" open={open} onClose={() => setOpen(false)}>
         <Box mb={2}>
-          <DialogTitle>Create New Directory</DialogTitle>
+          <DialogTitle>Rename</DialogTitle>
         </Box>
         <DialogContent>
           <form onSubmit={formik.handleSubmit}>
             <Box mb={4}>
               <TextField
                 fullWidth
-                name="name"
-                label="Name"
-                value={formik.values.name}
+                name="newName"
+                label="New Name"
+                value={formik.values.newName}
                 onChange={formik.handleChange}
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                helperText={formik.touched.name && formik.errors.name}
+                error={formik.touched.newName && Boolean(formik.errors.newName)}
+                helperText={formik.touched.newName && formik.errors.newName}
               />
             </Box>
+            {selected.length > 0 && selected[0].split(".")[1] ? <Box mb={4}>
+              <TextField
+                fullWidth
+                name="newExtension"
+                label="New Extension"
+                value={formik.values.newExtension}
+                onChange={formik.handleChange}
+                error={formik.touched.newExtension && Boolean(formik.errors.newExtension)}
+                helperText={formik.touched.newExtension && formik.errors.newExtension}
+              />
+            </Box> : ''}
             <DialogActions>
               <Button
                 color="primary"

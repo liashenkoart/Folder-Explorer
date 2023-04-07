@@ -19,6 +19,7 @@ interface EnhancedTableToolbarProps {
   getFilesByPath: (value: string[]) => void,
   path_id: string[];
   setSelected: (value: readonly string[]) => void;
+  setOpenRename: (value: boolean) => void;
 }
 
 export const EnhancedTableToolbar = (
@@ -28,7 +29,8 @@ export const EnhancedTableToolbar = (
     numSelected,
     path_id,
     getFilesByPath,
-    rows
+    rows,
+    setOpenRename
   }: EnhancedTableToolbarProps) => {
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -46,6 +48,7 @@ export const EnhancedTableToolbar = (
         }, 3000)
       })
   }
+
   return (
     <>
       {errorMessage && <Notification errorMessage={errorMessage} />}
@@ -67,7 +70,7 @@ export const EnhancedTableToolbar = (
           </Typography>}
         {numSelected === 1
           ? <Box display="flex" alignItems="center">
-            <Tooltip title="Delete">
+            <Tooltip title="Edit" onClick={() => setOpenRename(true)}>
               <IconButton>
                 <EditIcon />
               </IconButton>
