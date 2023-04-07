@@ -13,7 +13,7 @@ import { Notification } from "../Notification/Notification";
 
 
 interface EnhancedTableToolbarProps {
-  rows: any;
+  filteredRows: any;
   numSelected: number;
   selected: readonly string[];
   getFilesByPath: (value: string[]) => void,
@@ -29,13 +29,13 @@ export const EnhancedTableToolbar = (
     numSelected,
     path_id,
     getFilesByPath,
-    rows,
+    filteredRows,
     setOpenRename
   }: EnhancedTableToolbarProps) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const onDelete = (name: readonly string[]) => {
-    const current = rows.filter((row: any) => row.name === name[0]);
+    const current = filteredRows.filter((row: any) => row.name === name[0]);
     FilesAPI.delete(current[0].type, current[0].path)
       .then(() => {
         setSelected([]);

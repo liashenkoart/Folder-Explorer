@@ -10,9 +10,22 @@ import cn from "classnames";
 
 //  styles
 import styles from "../../styles/files.module.scss";
+import { FC, useEffect, useState } from "react";
 
-export const BackAndSearch = () => {
+interface IBackAndSearch {
+  setFilteredRows: (value: any) => void,
+  rows: any,
+}
+
+export const BackAndSearch: FC<IBackAndSearch> = ({ setFilteredRows, rows }) => {
   const router = useRouter();
+
+  const [searchValue, setSearchValue] = useState('');
+
+  useEffect(() => {
+    const filteredRows: any = rows.filter((row: any) => row.name.includes(searchValue));
+    setFilteredRows(filteredRows);
+  }, [searchValue, rows, setFilteredRows])
 
   return (
     <Box
@@ -37,7 +50,12 @@ export const BackAndSearch = () => {
         </a>
       </Link>
       <Box flex="auto" maxWidth="500px" ml={2}>
-        <TextField size="small" fullWidth label="Search..." type="search" />
+        <TextField
+          size="small"
+          fullWidth label="Search..."
+          type="search"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)} />
       </Box>
     </Box>
   );

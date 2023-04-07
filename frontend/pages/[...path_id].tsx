@@ -56,6 +56,7 @@ export default function Files() {
   const { path_id }: any = router.query;
 
   const [rows, setRows] = React.useState([initialRor]);
+  const [filteredRows, setFilteredRows] = React.useState([initialRor]);
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -70,7 +71,7 @@ export default function Files() {
   };
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.name);
+      const newSelected = filteredRows.map((n) => n.name);
       setSelected(newSelected);
       return;
     }
@@ -115,6 +116,7 @@ export default function Files() {
         })
       }
       setRows(newData)
+      setFilteredRows(newData)
     })
   }
 
@@ -161,11 +163,11 @@ export default function Files() {
                 numSelected={selected.length}
                 path_id={path_id}
                 getFilesByPath={getFilesByPath}
-                rows={rows}
+                filteredRows={filteredRows}
                 setOpenRename={setOpenRename} />
-              <BackAndSearch />
+              <BackAndSearch rows={rows} setFilteredRows={setFilteredRows} />
               <TableContainer>
-                {rows.length > 0
+                {filteredRows.length > 0
                   ? <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="small">
                     <EnhancedTableHead
                       numSelected={selected.length}
@@ -173,10 +175,10 @@ export default function Files() {
                       orderBy={orderBy}
                       onSelectAllClick={handleSelectAllClick}
                       onRequestSort={handleRequestSort}
-                      rowCount={rows.length}
+                      rowCount={filteredRows.length}
                     />
                     <TableBody>
-                      {stableSort(rows, getComparator(order, orderBy)).map((row, index) => {
+                      {stableSort(filteredRows, getComparator(order, orderBy)).map((row, index) => {
                         const isItemSelected = isSelected(row.name);
                         const labelId = `enhanced-table-checkbox-${index}`;
                         return (<TableRow
@@ -217,7 +219,7 @@ export default function Files() {
                     </TableBody>
                   </Table>
                   : <Box p={2}>
-                    <Typography variant="h6" textAlign="center">Empty Folder</Typography>
+                    <Typography variant="h6" textAlign="center">Not folders or files</Typography>
                   </Box>}
               </TableContainer>
             </Paper>
