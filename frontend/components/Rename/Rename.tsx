@@ -27,6 +27,7 @@ interface ICreateFile {
 
 const validationSchema = yup.object({
   newName: yup.string().required('Name is required'),
+  newExtension: yup.string().required('Extension is required'),
 });
 
 export const Rename: FC<ICreateFile> = ({ getFilesByPath, path_id, setOpen, open, selected, setSelected }) => {
