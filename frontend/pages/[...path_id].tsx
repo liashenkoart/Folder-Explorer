@@ -181,16 +181,12 @@ export default function Files() {
                       {stableSort(filteredRows, getComparator(order, orderBy)).map((row, index) => {
                         const isItemSelected = isSelected(row.name);
                         const labelId = `enhanced-table-checkbox-${index}`;
-                        return (<TableRow
-                          hover
-                          onClick={(event) => handleClick(event, row.name)}
-                          role="checkbox"
-                          aria-checked={isItemSelected}
-                          tabIndex={-1}
-                          key={row.name}
-                          selected={isItemSelected}>
+                        return (<TableRow hover key={row.name}>
                           <TableCell padding="checkbox">
-                            <Checkbox color="primary" checked={isItemSelected} />
+                            <Checkbox
+                              color="primary"
+                              checked={isItemSelected}
+                              onClick={(event) => handleClick(event, row.name)} />
                           </TableCell>
                           <TableCell id={labelId} padding="none">
                             <Box display="flex" alignItems="center" gap={1}>
