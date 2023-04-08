@@ -17,7 +17,6 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import FolderIcon from '@mui/icons-material/Folder';
 import { useRouter } from "next/router";
@@ -215,7 +214,7 @@ export default function Files() {
                     </TableBody>
                   </Table>
                   : <Box p={2}>
-                    <Typography variant="h6" textAlign="center">Not folders or files</Typography>
+                    <Typography variant="h6" textAlign="center">No folders or files</Typography>
                   </Box>}
               </TableContainer>
             </Paper>
@@ -223,13 +222,13 @@ export default function Files() {
           <Box display="flex" alignItems="center" gap={2}>
             <Button
               variant="outlined"
-              startIcon={<FileDownloadIcon />}
+              startIcon={<FileCopyIcon />}
               onClick={() => setOpenFile(true)}>
               Create file
             </Button>
             <Button
               variant="outlined"
-              startIcon={<FileDownloadIcon />}
+              startIcon={<FolderIcon />}
               onClick={() => setOpenDirectory(true)}>
               Create directory
             </Button>
